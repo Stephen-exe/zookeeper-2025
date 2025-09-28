@@ -62,8 +62,46 @@ class Cli {
   }
 
   // TODO: Update the startAnimalCli() method to create an Animal object and push to the animals array
-  startAnimalCli(): void {}
-
+  startAnimalCli(): void {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'species',
+          message: 'What animal are you bringing in?',
+        },
+        {
+          type: 'confirm',
+          name: 'hungry',
+          message: 'Are they hungry?',
+        },
+        {
+          type: 'number',
+          name: 'amount',
+          message: 'How many of them?',
+        },
+        {
+          type: 'number',
+          name: 'weight',
+          message: 'How heavy are the animals on average in pounds?',
+        },
+      ])
+      .then((res: ZooAnimals) => {
+        const newAnimal = new Animal(
+          res.species,
+          res.hungry,
+          res.amount,
+          res.weight
+        );
+        console.log(
+          `This is the information for your new animal: ${JSON.stringify(
+            newAnimal
+          )}`
+        );
+        this.animals.push(newAnimal);
+        this.startCli();
+      });
+  }
   startEmployeeCli(): void {
     inquirer
       .prompt([
@@ -84,8 +122,48 @@ class Cli {
   }
 
   // TODO: Update the startZooKeeperCli() method to create an Employee object and push to the employees array
-  startZooKeeperCli(): void {}
-
+  startZooKeeperCli(): void {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'What is their name?',
+        },
+        {
+          type: 'input',
+          name: 'id',
+          message: 'what is their ID number?',
+        },
+        {
+          type: 'input',
+          name: 'title',
+          message: 'what is their title?',
+        },
+        {
+          type: 'number',
+          name: 'salary',
+          message: 'what is their salary?',
+        },
+        {
+          type: 'input',
+          name: 'specialty',
+          message: 'what is their specialty?',
+        },
+      ])
+      .then((res) => {
+        const newZooKeeper = new ZooKeeper(
+          res.name,
+          res.id,
+          res.title,
+          res.salary,
+          res.specialty
+        );
+        console.log(`Please welcome the new ZooKeeper: ${newZooKeeper.name}!`);
+        this.employees.push(newZooKeeper);
+        this.startCli();
+      });
+  }
   startZooWorkerCli(): void {
     inquirer
       .prompt([
@@ -130,8 +208,15 @@ class Cli {
   }
 
   // TODO: Update the feedAnimals() method to iterate through the animals array and if the animal is hungry, console the species will be fed.
-  feedAnimals(): void {}
-
+  feedAnimals(): void {
+    console.log('Checking to see if any animals need to be fed...');
+    this.animals.forEach((animal) => {
+      if (animal.hungry) {
+        console.log(`${animal.species} will be fed!`);
+      }
+    });
+    this.startCli();
+  }
   payEmployee(): void {
     inquirer
       .prompt([
@@ -147,6 +232,12 @@ class Cli {
         },
       ])
       .then((res) => {
+        const employeePaid = this.employees.find((employee) => {
+          return res.name === employee.name;
+        });
+
+        employeePaid?.receivePay(res.number);
+        console.log(`${employeePaid?.name} received ${res.pay}!`);
         // TODO: Update the method to iterate through the employees array and find the name of the employee to receive pay.
       });
   }
